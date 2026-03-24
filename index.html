@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oak Harbor Finance — Quote Email Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-light: #243044;
+    --green: #2d6a4f;
+    --green-light: #40916c;
+    --green-pale: #d8f3dc;
+    --gold: #c9a227;
+    --gold-light: #e8d48b;
+    --cream: #faf8f5;
+    --warm-gray: #6b7280;
+    --light-gray: #e5e7eb;
+    --white: #ffffff;
+    --red: #dc2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--navy);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .app-header .tree-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--green-pale);
+  }
+  .app-header h1 {
+    font-family: 'Lora', serif;
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .app-header h1 span {
+    color: var(--gold-light);
+    font-weight: 400;
+    font-size: 14px;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .panel-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 24px;
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-header .badge {
+    background: var(--green);
+    color: var(--green-pale);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .panel-body { padding: 24px; }
+
+  /* ── FORM ELEMENTS ── */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--warm-gray);
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--light-gray);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    transition: border-color 0.2s;
+    background: var(--white);
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  .field-group { margin-bottom: 16px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── TOGGLE ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--cream);
+    border-radius: 8px;
+  }
+  .toggle-row span { font-size: 14px; font-weight: 500; }
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--light-gray);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+  .toggle.active { background: var(--green); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle.active::after { transform: translateX(20px); }
+
+  /* ── PERSON SECTION ── */
+  .person-section {
+    border: 1.5px solid var(--light-gray);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .person-section h3 {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .person-section h3::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── OPTIONS TABLE ── */
+  .options-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .options-header h4 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--warm-gray);
+  }
+  .add-btn, .remove-btn {
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 6px 12px;
+    transition: all 0.2s;
+  }
+  .add-btn {
+    background: var(--green-pale);
+    color: var(--green);
+  }
+  .add-btn:hover { background: var(--green); color: white; }
+  .remove-btn {
+    background: #fee2e2;
+    color: var(--red);
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .remove-btn:hover { background: var(--red); color: white; }
+
+  .option-card {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .option-card .option-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .option-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .option-grid label { font-size: 11px; }
+  .option-grid input { font-size: 13px; padding: 8px 10px; }
+
+  /* ── SECTION DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--light-gray);
+    margin: 20px 0;
+  }
+
+  /* ── GENERATE BTN ── */
+  .generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+  .generate-btn:hover {
+    background: var(--navy);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26,35,50,0.25);
+  }
+
+  /* ── PREVIEW PANEL ── */
+  .preview-frame {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 4px;
+    min-height: 400px;
+  }
+  .preview-frame iframe {
+    width: 100%;
+    min-height: 600px;
+    border: none;
+    border-radius: 6px;
+    background: white;
+  }
+
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .action-bar button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid;
+  }
+  .btn-copy {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+  .btn-copy:hover { background: var(--navy-light); }
+  .btn-source {
+    background: white;
+    color: var(--navy);
+    border-color: var(--light-gray);
+  }
+  .btn-source:hover { background: var(--cream); }
+  .copied-msg {
+    text-align: center;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 600;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .copied-msg.show { opacity: 1; }
+
+  /* ── NOTES ── */
+  .helper-text {
+    font-size: 12px;
+    color: var(--warm-gray);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="tree-icon"><img src="https://www.oakharborfinance.com/images/logo.png" alt="Oak Harbor Finance" style="width:36px;height:36px;object-fit:contain;"></div>
+  <h1>Oak Harbor Finance <span>Quote Follow-Up Email Generator</span></h1>
+</div>
+
+<div class="container">
+
+  <!-- ═══ LEFT: FORM ═══ -->
+  <div class="panel">
+    <div class="panel-header">
+      Build Your Email
+      <span class="badge">Step 1</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- CLIENT INFO -->
+      <div class="field-group">
+        <label>Client First Name</label>
+        <input type="text" id="clientName" placeholder="e.g. Sarah" />
+      </div>
+
+      <div class="field-group">
+        <label>Personal Note (optional)</label>
+        <textarea id="personalNote" placeholder="e.g. It was great speaking with you today about protecting your family's home..."></textarea>
+        <div class="helper-text">A sentence or two referencing your conversation. Makes the email feel personal.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- TOGGLE: 2ND PERSON -->
+      <div class="toggle-row">
+        <div class="toggle" id="togglePerson2" onclick="toggleSecondPerson()"></div>
+        <span>Include a second person (spouse/partner)</span>
+      </div>
+
+      <!-- PERSON 1 -->
+      <div class="person-section" id="person1Section">
+        <h3>Person 1</h3>
+        <div class="field-row field-group">
+          <div>
+            <label>Full Name</label>
+            <input type="text" id="p1Name" placeholder="e.g. Sarah Johnson" />
+          </div>
+          <div>
+            <label>Product Type</label>
+            <input type="text" id="p1Product" placeholder="e.g. 20-Year Term Life" />
+          </div>
+        </div>
+
+        <div class="options-header">
+          <h4>Coverage Options</h4>
+          <button class="add-btn" onclick="addOption(1)">+ Add Option</button>
+        </div>
+        <div id="p1Options">
+          <div class="option-card" data-person="1" data-idx="0">
+            <div class="option-num">
+              <span>Option A</span>
+            </div>
+            <div class="option-grid">
+              <div>
+                <label>Face Value</label>
+                <input type="text" placeholder="$250,000" class="opt-face" />
+              </div>
+              <div>
+                <label>Monthly Premium</label>
+                <input type="text" placeholder="$32.50" class="opt-premium" />
+              </div>
+              <div>
+                <label>Carrier / Notes</label>
+                <input type="text" placeholder="e.g. Transamerica" class="opt-carrier" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERSON 2 -->
+      <div class="person-section" id="person2Section" style="display:none;">
+        <h3>Person 2</h3>
+        <div class="field-row field-group">
+          <div>
+            <label>Full Name</label>
+            <input type="text" id="p2Name" placeholder="e.g. Mike Johnson" />
+          </div>
+          <div>
+            <label>Product Type</label>
+            <input type="text" id="p2Product" placeholder="e.g. 20-Year Term Life" />
+          </div>
+        </div>
+        <div class="options-header">
+          <h4>Coverage Options</h4>
+          <button class="add-btn" onclick="addOption(2)">+ Add Option</button>
+        </div>
+        <div id="p2Options">
+          <div class="option-card" data-person="2" data-idx="0">
+            <div class="option-num">
+              <span>Option A</span>
+            </div>
+            <div class="option-grid">
+              <div>
+                <label>Face Value</label>
+                <input type="text" placeholder="$250,000" class="opt-face" />
+              </div>
+              <div>
+                <label>Monthly Premium</label>
+                <input type="text" placeholder="$32.50" class="opt-premium" />
+              </div>
+              <div>
+                <label>Carrier / Notes</label>
+                <input type="text" placeholder="e.g. Transamerica" class="opt-carrier" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="generate-btn" onclick="generateEmail()">Generate Email Preview →</button>
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT: PREVIEW ═══ -->
+  <div class="panel">
+    <div class="panel-header">
+      Email Preview
+      <span class="badge">Step 2</span>
+    </div>
+    <div class="panel-body">
+      <div class="preview-frame">
+        <iframe id="previewFrame"></iframe>
+      </div>
+      <div class="action-bar">
+        <button class="btn-copy" onclick="downloadHTML()">⬇ Download HTML File</button>
+        <button class="btn-source" onclick="copyPlainText()">📝 Copy Plain Text</button>
+      </div>
+      <div class="action-bar" style="margin-top:0;">
+        <button class="btn-source" onclick="copyHTML()">📋 Copy Raw HTML Code</button>
+      </div>
+      <div class="copied-msg" id="copiedMsg">Copied to clipboard!</div>
+      <div class="helper-text" style="margin-top:12px">
+        <strong>How to use with Outlook:</strong><br/>
+        1. Click <strong>"Download HTML File"</strong> to save the email<br/>
+        2. Open that file in Chrome or Edge<br/>
+        3. Ctrl+A (select all) → Ctrl+C (copy)<br/>
+        4. Outlook → New Email → click in body → Ctrl+V (paste)<br/>
+        5. All formatting and links will be intact and clickable!<br/><br/>
+        <em>"Copy Plain Text" gives a simple version for texting or basic email.</em>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const optionLabels = ['A', 'B', 'C'];
+  let showPerson2 = false;
+  let generatedHTML = '';
+  let generatedText = '';
+
+  function toggleSecondPerson() {
+    showPerson2 = !showPerson2;
+    document.getElementById('togglePerson2').classList.toggle('active', showPerson2);
+    document.getElementById('person2Section').style.display = showPerson2 ? 'block' : 'none';
+  }
+
+  function addOption(person) {
+    const container = document.getElementById(`p${person}Options`);
+    const count = container.children.length;
+    if (count >= 3) return alert('Maximum 3 options per person.');
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.dataset.person = person;
+    card.dataset.idx = count;
+    card.innerHTML = `
+      <div class="option-num">
+        <span>Option ${optionLabels[count]}</span>
+        <button class="remove-btn" onclick="removeOption(this)">✕ Remove</button>
+      </div>
+      <div class="option-grid">
+        <div><label>Face Value</label><input type="text" placeholder="$250,000" class="opt-face" /></div>
+        <div><label>Monthly Premium</label><input type="text" placeholder="$32.50" class="opt-premium" /></div>
+        <div><label>Carrier / Notes</label><input type="text" placeholder="e.g. SBLI" class="opt-carrier" /></div>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+
+  function removeOption(btn) {
+    const card = btn.closest('.option-card');
+    const person = card.dataset.person;
+    card.remove();
+    // re-label
+    const container = document.getElementById(`p${person}Options`);
+    Array.from(container.children).forEach((c, i) => {
+      c.querySelector('.option-num span').textContent = `Option ${optionLabels[i]}`;
+      c.dataset.idx = i;
+    });
+  }
+
+  function getOptions(person) {
+    const container = document.getElementById(`p${person}Options`);
+    const cards = container.querySelectorAll('.option-card');
+    const opts = [];
+    cards.forEach((card, i) => {
+      opts.push({
+        label: optionLabels[i],
+        face: card.querySelector('.opt-face').value || '—',
+        premium: card.querySelector('.opt-premium').value || '—',
+        carrier: card.querySelector('.opt-carrier').value || ''
+      });
+    });
+    return opts;
+  }
+
+  function buildPersonTable(name, product, options) {
+    let rows = '';
+    options.forEach(o => {
+      rows += `
+        <tr>
+          <td style="padding:10px 16px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#2d6a4f;font-size:14px;">Option ${o.label}</td>
+          <td style="padding:10px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;">${o.face}</td>
+          <td style="padding:10px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;font-weight:700;color:#1a2332;">${o.premium}/mo</td>
+          <td style="padding:10px 16px;border-bottom:1px solid #e5e7eb;font-size:13px;color:#6b7280;">${o.carrier}</td>
+        </tr>`;
+    });
+
+    return `
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0 8px 0;">
+        <tr>
+          <td style="padding:0 0 8px 0;">
+            <span style="font-family:'Georgia',serif;font-size:16px;font-weight:700;color:#1a2332;">${name}</span>
+            ${product ? `<span style="display:inline-block;margin-left:10px;background:#d8f3dc;color:#2d6a4f;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px;">${product}</span>` : ''}
+          </td>
+        </tr>
+      </table>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;border-collapse:separate;">
+        <tr style="background:#f8faf8;">
+          <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;width:18%;">Option</th>
+          <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;width:28%;">Face Value</th>
+          <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;width:28%;">Premium</th>
+          <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;width:26%;">Carrier</th>
+        </tr>
+        ${rows}
+      </table>`;
+  }
+
+  function generateEmail() {
+    const clientName = document.getElementById('clientName').value || 'there';
+    const personalNote = document.getElementById('personalNote').value;
+    const p1Name = document.getElementById('p1Name').value || 'Person 1';
+    const p1Product = document.getElementById('p1Product').value;
+    const p1Options = getOptions(1);
+
+    let p2Block = '';
+    let p2Text = '';
+    if (showPerson2) {
+      const p2Name = document.getElementById('p2Name').value || 'Person 2';
+      const p2Product = document.getElementById('p2Product').value;
+      const p2Options = getOptions(2);
+      p2Block = buildPersonTable(p2Name, p2Product, p2Options);
+      p2Text = `\n\n--- ${p2Name}${p2Product ? ' — ' + p2Product : ''} ---\n`;
+      p2Options.forEach(o => {
+        p2Text += `Option ${o.label}: ${o.face} coverage | ${o.premium}/mo${o.carrier ? ' (' + o.carrier + ')' : ''}\n`;
+      });
+    }
+
+    const noteHTML = personalNote
+      ? `<p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 20px 0;">${personalNote}</p>`
+      : '';
+
+    generatedHTML = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f3f0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f3f0;padding:24px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+  <!-- HEADER -->
+  <tr>
+    <td style="background:#1a2332;padding:28px 32px;">
+      <table cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding-right:14px;vertical-align:middle;">
+            <img src="https://www.oakharborfinance.com/images/logo.png" alt="Oak Harbor Finance" style="width:36px;height:36px;object-fit:contain;">
+          </td>
+          <td style="vertical-align:middle;">
+            <span style="font-family:'Georgia',serif;font-size:18px;font-weight:700;color:#ffffff;">Oak Harbor Finance</span><br/>
+            <span style="font-size:12px;color:#9ca3af;letter-spacing:0.3px;">Life Insurance & Mortgage Protection</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- BODY -->
+  <tr>
+    <td style="padding:32px;">
+      <p style="font-family:'Georgia',serif;font-size:20px;font-weight:700;color:#1a2332;margin:0 0 20px 0;">Hi ${clientName},</p>
+
+      ${noteHTML}
+
+      <p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 6px 0;">Based on our conversation, here are the coverage options I've put together for you:</p>
+
+      <!-- PERSON 1 TABLE -->
+      ${buildPersonTable(p1Name, p1Product, p1Options)}
+
+      <!-- PERSON 2 TABLE (if applicable) -->
+      ${p2Block}
+
+      <!-- CTA -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 0 0;">
+        <tr>
+          <td style="background:#f0fdf4;border-radius:10px;padding:20px 24px;border-left:4px solid #2d6a4f;">
+            <p style="font-size:14px;font-weight:700;color:#2d6a4f;margin:0 0 6px 0;">Ready to move forward?</p>
+            <p style="font-size:14px;line-height:1.6;color:#374151;margin:0;">Simply reply to this email or schedule a quick call and I'll walk you through the next steps. There's no obligation — I'm happy to answer any questions.</p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- SCHEDULE LINK -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="https://calendly.com/russell-oakharborfinance/15min" style="display:inline-block;background:#2d6a4f;color:#ffffff;font-size:14px;font-weight:700;padding:14px 32px;border-radius:8px;text-decoration:none;letter-spacing:0.3px;">Schedule a 15-Minute Call →</a>
+          </td>
+        </tr>
+      </table>
+
+      <!-- SIGN OFF -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 0 0;">
+        <tr>
+          <td>
+            <p style="font-size:15px;line-height:1.7;color:#374151;margin:0 0 4px 0;">Talk soon,</p>
+            <p style="font-family:'Georgia',serif;font-size:16px;font-weight:700;color:#1a2332;margin:0;">Russell Powers</p>
+            <p style="font-size:13px;color:#6b7280;margin:4px 0 0 0;">Owner, Oak Harbor Finance</p>
+            <p style="font-size:13px;color:#6b7280;margin:2px 0 0 0;">Missouri License #3003556164</p>
+            <p style="font-size:13px;color:#6b7280;margin:2px 0 0 0;">(417) 844-3980 · <a href="https://www.oakharborfinance.com" style="color:#2d6a4f;text-decoration:none;">oakharborfinance.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="background:#f8f8f6;padding:20px 32px;border-top:1px solid #e5e7eb;">
+      <p style="font-size:11px;color:#9ca3af;line-height:1.5;margin:0;text-align:center;">
+        This email contains personalized insurance quotes based on our conversation. Rates shown are estimates and may vary based on underwriting. Coverage is subject to carrier approval. Oak Harbor Finance is an independent insurance brokerage licensed in Missouri.
+      </p>
+    </td>
+  </tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>`;
+
+    // Plain text version
+    let p1Text = `--- ${p1Name}${p1Product ? ' — ' + p1Product : ''} ---\n`;
+    p1Options.forEach(o => {
+      p1Text += `Option ${o.label}: ${o.face} coverage | ${o.premium}/mo${o.carrier ? ' (' + o.carrier + ')' : ''}\n`;
+    });
+
+    generatedText = `Hi ${clientName},
+
+${personalNote ? personalNote + '\n\n' : ''}Based on our conversation, here are the coverage options I've put together for you:
+
+${p1Text}${p2Text}
+
+Ready to move forward? Simply reply to this email or schedule a quick call and I'll walk you through the next steps. No obligation — happy to answer any questions.
+
+Schedule a call: https://calendly.com/russell-oakharborfinance/15min
+
+Talk soon,
+Russell Powers
+Owner, Oak Harbor Finance
+Missouri License #3003556164
+(417) 844-3980 · oakharborfinance.com`;
+
+    // Render preview
+    const iframe = document.getElementById('previewFrame');
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(generatedHTML);
+    doc.close();
+
+    // Auto-resize iframe
+    setTimeout(() => {
+      iframe.style.height = (doc.body.scrollHeight + 40) + 'px';
+    }, 100);
+  }
+
+  function copyHTML() {
+    if (!generatedHTML) return alert('Generate the email first!');
+    navigator.clipboard.writeText(generatedHTML).then(() => showCopied());
+  }
+
+  function downloadHTML() {
+    if (!generatedHTML) return alert('Generate the email first!');
+    const clientName = document.getElementById('clientName').value || 'Client';
+    const date = new Date().toISOString().slice(0,10);
+    const filename = `Oak-Harbor-Quote-${clientName.replace(/\s+/g,'-')}-${date}.html`;
+    const blob = new Blob([generatedHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showCopied();
+  }
+
+  function copyPlainText() {
+    if (!generatedText) return alert('Generate the email first!');
+    navigator.clipboard.writeText(generatedText).then(() => showCopied());
+  }
+
+  function showCopied() {
+    const msg = document.getElementById('copiedMsg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+
+  // Initialize with a default preview
+  window.addEventListener('load', generateEmail);
+</script>
+</body>
+</html>

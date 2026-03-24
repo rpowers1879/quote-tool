@@ -789,6 +789,34 @@ Missouri License #3003556164
     setTimeout(() => msg.classList.remove('show'), 2000);
   }
 
+  // Auto-format money fields with $ and commas
+  function formatMoney(value) {
+    // Strip everything except digits and decimal
+    let num = value.replace(/[^0-9.]/g, '');
+    if (!num) return '';
+    // Split on decimal
+    let parts = num.split('.');
+    // Add commas to the integer part
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // Limit decimal to 2 places
+    if (parts[1] !== undefined) {
+      parts[1] = parts[1].slice(0, 2);
+    }
+    return '$' + parts.join('.');
+  }
+
+  // Apply formatting to all money inputs
+  document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('opt-face') || e.target.classList.contains('opt-premium')) {
+      const pos = e.target.selectionStart;
+      const oldLen = e.target.value.length;
+      e.target.value = formatMoney(e.target.value);
+      const newLen = e.target.value.length;
+      // Try to keep cursor position reasonable
+      e.target.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
+    }
+  });
+
   // Initialize with a default preview
   window.addEventListener('load', generateEmail);
 </script>
